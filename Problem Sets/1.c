@@ -141,7 +141,6 @@ int main() {
             int comparisons = 0;
             for(int i = 1; i < N; i++) {
                 int tmp = arr[i], j = i - 1;
-                comparisons++;
                 while(j >= 0) {
                     comparisons++;
                     if(arr[j] > tmp) {
@@ -149,7 +148,6 @@ int main() {
                     } else {
                         break;
                     }
-                    comparisons++;
                     j--;
                 }
                 arr[j + 1] = tmp;
@@ -210,7 +208,7 @@ int main() {
             for(int i = N - 1; i > 0; i--) {
                 for(int j = 0; j < i; j++) {
                     if(arr[j] > arr[j + 1]) {
-                        swaps += 2;
+                        swaps++;
                         int tmp = arr[j];
                         arr[j] = arr[j + 1];
                         arr[j + 1] = tmp;
@@ -237,7 +235,6 @@ int main() {
                     arr[j + 1] = arr[j];
                     j--;
                 }
-                swaps++;
                 arr[j + 1] = tmp;
             }
             swapsInsertionSort += swaps;
@@ -261,7 +258,7 @@ int main() {
                     }
                 }
 
-                if(smallestIndex != i) swaps += 2;
+                swaps++;
                 int tmp = arr[i];
                 arr[i] = arr[smallestIndex];
                 arr[smallestIndex] = tmp;
@@ -287,13 +284,22 @@ int main() {
     }
 
     //Save all averages into CSV???
-    FILE *fp = fopen("hopesanddreams.csv", "w+");
-    fprintf(fp, "Table, Time, Comparisons, Swaps");
+    FILE *fp = fopen("1time.csv", "w+");
+    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
     for(int i = 0; i < sizeInputsArrSize; i++) {
-        fprintf(fp, "\nN = %d", sizeInputs[i]);
-        fprintf(fp, "\nBubble Sort, %f, %.2f, %.2f", averageTimeBubble[i], averageComparisonsBubble[i], averageSwapsBubble[i]);
-        fprintf(fp, "\nInsertion Sort, %f, %.2f, %.2f", averageTimeInsertion[i], averageComparisonsInsertion[i], averageSwapsInsertion[i]);
-        fprintf(fp, "\nSelection Sort, %f, %.2f, %.2f", averageTimeSelection[i], averageComparisonsSelection[i], averageSwapsSelection[i]);
+        fprintf(fp, "%d, %f, %.2f, %.2f\n", sizeInputs[i], averageTimeBubble[i], averageTimeInsertion[i], averageTimeSelection[i]);
+    }
+    fclose(fp);
+    fp = fopen("1comparison.csv", "w+");
+    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
+    for(int i = 0; i < sizeInputsArrSize; i++) {
+        fprintf(fp, "%d, %f, %.2f, %.2f\n", sizeInputs[i], averageComparisonsBubble[i], averageComparisonsInsertion[i], averageComparisonsSelection[i]);
+    }
+    fclose(fp);
+    fp = fopen("1swap.csv", "w+");
+    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
+    for(int i = 0; i < sizeInputsArrSize; i++) {
+        fprintf(fp, "%d, %f, %.2f, %.2f\n", sizeInputs[i], averageSwapsBubble[i], averageSwapsInsertion[i], averageSwapsSelection[i]);
     }
     fclose(fp);
 
