@@ -1,0 +1,33 @@
+Table, Time, Comparisons, Swaps
+N = 10
+Bubble Sort, 0.000000, 45.00, 42.20
+Insertion Sort, 0.000000, 59.07, 33.57
+Selection Sort, 0.000000, 45.00, 13.87
+N = 20
+Bubble Sort, 0.000000, 190.00, 199.47
+Insertion Sort, 0.000000, 222.90, 118.77
+Selection Sort, 0.000000, 190.00, 32.40
+N = 50
+Bubble Sort, 0.000000, 1225.00, 1221.00
+Insertion Sort, 0.000000, 1307.70, 678.63
+Selection Sort, 0.000000, 1225.00, 91.27
+N = 100
+Bubble Sort, 0.000033, 4950.00, 4925.67
+Insertion Sort, 0.000000, 5178.40, 2608.07
+Selection Sort, 0.000033, 4950.00, 189.60
+N = 200
+Bubble Sort, 0.000033, 19900.00, 19851.80
+Insertion Sort, 0.000033, 20276.70, 10133.03
+Selection Sort, 0.000067, 19900.00, 388.93
+N = 1000
+Bubble Sort, 0.001567, 499500.00, 499832.47
+Insertion Sort, 0.000633, 500637.03, 251281.87
+Selection Sort, 0.001133, 499500.00, 1984.93
+N = 5000
+Bubble Sort, 0.060733, 12497500.00, 12516197.87
+Insertion Sort, 0.030900, 12505421.33, 6246248.87
+Selection Sort, 0.055667, 12497500.00, 9982.07
+N = 10000
+Bubble Sort, 0.390233, 49995000.00, 49964527.80
+Insertion Sort, 0.084000, 50069747.30, 25000166.10
+Selection Sort, 0.196833, 49995000.00, 19978.80

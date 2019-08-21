@@ -285,4 +285,27 @@ int main() {
         printf("Swaps Taken (N = %d) (Insertion Sort): %.2f\n", sizeInputs[i], averageSwapsInsertion[i]);
         printf("Swaps Taken (N = %d) (Selection Sort): %.2f\n", sizeInputs[i], averageSwapsSelection[i]);
     }
+
+    //Save all averages into CSV???
+    FILE *fp = fopen("hopesanddreams.csv", "w+");
+    fprintf(fp, "Table, Time, Comparisons, Swaps");
+    for(int i = 0; i < sizeInputsArrSize; i++) {
+        fprintf(fp, "\nN = %d", sizeInputs[i]);
+        fprintf(fp, "\nBubble Sort, %f, %.2f, %.2f", averageTimeBubble[i], averageComparisonsBubble[i], averageSwapsBubble[i]);
+        fprintf(fp, "\nInsertion Sort, %f, %.2f, %.2f", averageTimeInsertion[i], averageComparisonsInsertion[i], averageSwapsInsertion[i]);
+        fprintf(fp, "\nSelection Sort, %f, %.2f, %.2f", averageTimeSelection[i], averageComparisonsSelection[i], averageSwapsSelection[i]);
+    }
+    fclose(fp);
+
+    free(averageTimeBubble);
+    free(averageTimeInsertion);
+    free(averageTimeSelection);
+    free(averageComparisonsBubble);
+    free(averageComparisonsInsertion);
+    free(averageComparisonsSelection);
+    free(averageSwapsBubble);
+    free(averageTimeInsertion);
+    free(averageTimeSelection);
+
+    return 0;
 }
