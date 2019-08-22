@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define SAMPLE_SIZE 30
+
 int main() {
     int sizeInputs[] = {10, 20, 50, 100, 200, 1000, 5000, 10000};
     int sizeInputsArrSize = sizeof(sizeInputs)/sizeof(sizeInputs[0]);
+    FILE *fp;
 
     // Randomizer Setup
     srand(time(NULL));
@@ -16,84 +19,94 @@ int main() {
     double *averageTimeBubble = (double*) malloc(sizeInputsArrSize * sizeof(double));
     double *averageTimeInsertion = (double*) malloc(sizeInputsArrSize * sizeof(double));
     double *averageTimeSelection = (double*) malloc(sizeInputsArrSize * sizeof(double));
+    fp = fopen("1time.csv", "w+");
 
     for(int i = 0; i < sizeInputsArrSize; i++) {
         int N = sizeInputs[i];
-        int *arr = malloc(N * sizeof(int));
-        
-        //Bubble Sort
-        double timeBubbleSort = 0.0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
+        int *arrBubble = malloc(N * sizeof(int));
+        int *arrInsertion = malloc(N * sizeof(int));
+        int *arrSelection = malloc(N * sizeof(int));
+        double totalTimeBubble = 0.0;
+        double totalTimeInsertion = 0.0;
+        double totalTimeSelection = 0.0;
+
+        fprintf(fp, "N = %d\n", N);
+        fprintf(fp, "Test Case, Bubble Sort, Insertion Sort, Selection Sort\n");
+
+        for(int i = 0; i < SAMPLE_SIZE; i++) {
             for(int i = 0; i < N; i++) {
-                arr[i] = rand();
+                int x = rand();
+                arrBubble[i] = x;
+                arrInsertion[i] = x;
+                arrSelection[i] = x;
             }
 
-            clock_t start = clock();
+            //Bubble Sort
+            clock_t startBubble = clock();
             for(int i = N - 1; i > 0; i--) {
                 for(int j = 0; j < i; j++) {
-                    if(arr[j] > arr[j + 1]) {
-                        int tmp = arr[j];
-                        arr[j] = arr[j + 1];
-                        arr[j + 1] = tmp;
+                    if(arrBubble[j] > arrBubble[j + 1]) {
+                        int tmp = arrBubble[j];
+                        arrBubble[j] = arrBubble[j + 1];
+                        arrBubble[j + 1] = tmp;
                     }
                 }
             }
-            clock_t end = clock();
-            double duration = (double) (end - start) / CLOCKS_PER_SEC;
-            timeBubbleSort += duration;
-        }
-        averageTimeBubble[i] = timeBubbleSort / 30.0;
+            clock_t endBubble = clock();
+            double durationBubble = (double) (endBubble - startBubble) / CLOCKS_PER_SEC;
+            totalTimeBubble += durationBubble;
 
-        //Insertion Sort
-        double timeInsertionSort = 0.0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
-            for(int i = 0; i < N; i++) {
-                arr[i] = rand();
-            }
-
-            clock_t start = clock();
+            //Insertion Sort
+            clock_t startInsertion = clock();
             for(int i = 1; i < N; i++) {
-                int tmp = arr[i], j = i - 1;
-                while(j >= 0 && arr[j] > tmp) {
-                    arr[j + 1] = arr[j];
+                int tmp = arrInsertion[i], j = i - 1;
+                while(j >= 0 && arrInsertion[j] > tmp) {
+                    arrInsertion[j + 1] = arrInsertion[j];
                     j--;
                 }
-                arr[j + 1] = tmp;
+                arrInsertion[j + 1] = tmp;
             }
-            clock_t end = clock();
-            double duration = (double) (end - start) / CLOCKS_PER_SEC;
-            timeInsertionSort += duration;
-        }
-        averageTimeInsertion[i] = timeInsertionSort / 30.0;
+            clock_t endInsertion = clock();
+            double durationInsertion = (double) (endInsertion - startInsertion) / CLOCKS_PER_SEC;
+            totalTimeInsertion += durationInsertion;
 
-        //Selection Sort
-        double timeSelectionSort = 0.0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
-            for(int i = 0; i < N; i++) {
-                arr[i] = rand();
-            }
-
-            clock_t start = clock();
+            //Selection Sort
+            clock_t startSelection = clock();
             for(int i = 0; i < N; i++) {
                 int smallestIndex = i;
                 for(int j = i + 1; j < N; j++) {
-                    if(arr[j] < arr[smallestIndex]) smallestIndex = j;
+                    if(arrSelection[j] < arrSelection[smallestIndex]) smallestIndex = j;
                 }
 
-                int tmp = arr[i];
-                arr[i] = arr[smallestIndex];
-                arr[smallestIndex] = tmp;
+                int tmp = arrSelection[i];
+                arrSelection[i] = arrSelection[smallestIndex];
+                arrSelection[smallestIndex] = tmp;
             }
-            clock_t end = clock();
-            double duration = (double) (end - start) / CLOCKS_PER_SEC;
-            timeSelectionSort += duration;
+            clock_t endSelection = clock();
+            double durationSelection = (double) (endSelection - startSelection) / CLOCKS_PER_SEC;
+            totalTimeSelection += durationSelection;
+
+            fprintf(fp, "%d, %f, %f, %f\n", i + 1, durationBubble, durationInsertion, durationSelection);
         }
-        averageTimeSelection[i] = timeSelectionSort / 30.0;
-        free(arr);
+
+        averageTimeBubble[i] = totalTimeBubble / 30.0;
+        averageTimeInsertion[i] = totalTimeInsertion / 30.0;
+        averageTimeSelection[i] = totalTimeSelection / 30.0;
+
+        fprintf(fp, "Average, %f, %f, %f\n", averageTimeBubble[i], averageTimeInsertion[i], averageTimeSelection[i]);
+
+        free(arrBubble);
+        free(arrInsertion);
+        free(arrSelection);
     }
+
+    fprintf(fp, "Summary\n");
+    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
+    for(int i = 0; i < sizeInputsArrSize; i++) {
+        fprintf(fp, "%d, %f, %f, %f\n", sizeInputs[i], averageTimeBubble[i], averageTimeInsertion[i], averageTimeSelection[i]);
+    }
+
+    fclose(fp);
 
     printf("Completed\n");
     printf("Starting Comparison Tests...");
@@ -102,87 +115,95 @@ int main() {
     double *averageComparisonsBubble = (double*) malloc(sizeInputsArrSize * sizeof(double));
     double *averageComparisonsInsertion = (double*) malloc(sizeInputsArrSize * sizeof(double));
     double *averageComparisonsSelection = (double*) malloc(sizeInputsArrSize * sizeof(double));
+    fp = fopen("1comparison.csv", "w+");
 
     for(int i = 0; i < sizeInputsArrSize; i++) {
         int N = sizeInputs[i];
-        int *arr = malloc(N * sizeof(int));
-        
-        //Bubble Sort
-        int comparisonsBubbleSort = 0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
+        int *arrBubble = malloc(N * sizeof(int));
+        int *arrInsertion = malloc(N * sizeof(int));
+        int *arrSelection = malloc(N * sizeof(int));
+        int totalComparisonsBubble = 0;
+        int totalComparisonsInsertion = 0;
+        int totalComparisonsSelection = 0;
+
+        fprintf(fp, "N = %d\n", N);
+        fprintf(fp, "Test Case, Bubble Sort, Insertion Sort, Selection Sort\n");
+
+        for(int i = 0; i < SAMPLE_SIZE; i++) {
             for(int i = 0; i < N; i++) {
-                arr[i] = rand();
+                int x = rand();
+                arrBubble[i] = x;
+                arrInsertion[i] = x;
+                arrSelection[i] = x;
             }
 
-            int comparisons = 0;
+            //Bubble Sort
+            int comparisonsBubble = 0;
             for(int i = N - 1; i > 0; i--) {
                 for(int j = 0; j < i; j++) {
-                    comparisons++;
-                    if(arr[j] > arr[j + 1]) {
-                        int tmp = arr[j];
-                        arr[j] = arr[j + 1];
-                        arr[j + 1] = tmp;
+                    comparisonsBubble++;
+                    if(arrBubble[j] > arrBubble[j + 1]) {
+                        int tmp = arrBubble[j];
+                        arrBubble[j] = arrBubble[j + 1];
+                        arrBubble[j + 1] = tmp;
                     }
                 }
             }
-            comparisonsBubbleSort += comparisons;
-        }
-        averageComparisonsBubble[i] = (double) comparisonsBubbleSort / 30.0;
+            totalComparisonsBubble += comparisonsBubble;
 
-        //Insertion Sort
-        int comparisonsInsertionSort = 0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
-            for(int i = 0; i < N; i++) {
-                arr[i] = rand();
-            }
-
-            int comparisons = 0;
+            //Insertion Sort
+            int comparisonsInsertion = 0;
             for(int i = 1; i < N; i++) {
-                int tmp = arr[i], j = i - 1;
+                int tmp = arrInsertion[i], j = i - 1;
                 while(j >= 0) {
-                    comparisons++;
-                    if(arr[j] > tmp) {
-                        arr[j + 1] = arr[j];
+                    comparisonsInsertion++;
+                    if(arrInsertion[j] > tmp) {
+                        arrInsertion[j + 1] = arrInsertion[j];
                     } else {
                         break;
                     }
                     j--;
                 }
-                arr[j + 1] = tmp;
+                arrInsertion[j + 1] = tmp;
             }
-            comparisonsInsertionSort += comparisons;
-        }
-        averageComparisonsInsertion[i] = (double) comparisonsInsertionSort / 30.0;
+            totalComparisonsInsertion += comparisonsInsertion;
 
-        //Selection Sort
-        int comparisonsSelectionSort = 0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
-            for(int i = 0; i < N; i++) {
-                arr[i] = rand();
-            }
-
-            int comparisons = 0;
+            //Selection Sort
+            int comparisonsSelection = 0;
             for(int i = 0; i < N; i++) {
                 int smallestIndex = i;
                 for(int j = i + 1; j < N; j++) {
-                    comparisons++;
-                    if(arr[j] < arr[smallestIndex]) {
-                        smallestIndex = j;
-                    }
+                    comparisonsSelection++;
+                    if(arrSelection[j] < arrSelection[smallestIndex]) smallestIndex = j;
                 }
 
-                int tmp = arr[i];
-                arr[i] = arr[smallestIndex];
-                arr[smallestIndex] = tmp;
+                int tmp = arrSelection[i];
+                arrSelection[i] = arrSelection[smallestIndex];
+                arrSelection[smallestIndex] = tmp;
             }
-            comparisonsSelectionSort += comparisons;
+            totalComparisonsSelection += comparisonsSelection;
+
+            fprintf(fp, "%d, %d, %d, %d\n", i + 1, comparisonsBubble, comparisonsInsertion, comparisonsSelection);
         }
-        averageComparisonsSelection[i] = (double) comparisonsSelectionSort / 30.0;
-        free(arr);
+
+        averageComparisonsBubble[i] = (double) totalComparisonsBubble / 30.0;
+        averageComparisonsInsertion[i] = (double) totalComparisonsInsertion / 30.0;
+        averageComparisonsSelection[i] = (double) totalComparisonsSelection / 30.0;
+
+        fprintf(fp, "Average, %f, %f, %f\n", averageComparisonsBubble[i], averageComparisonsInsertion[i], averageComparisonsSelection[i]);
+
+        free(arrBubble);
+        free(arrInsertion);
+        free(arrSelection);
     }
+
+    fprintf(fp, "Summary\n");
+    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
+    for(int i = 0; i < sizeInputsArrSize; i++) {
+        fprintf(fp, "%d, %f, %f, %f\n", sizeInputs[i], averageComparisonsBubble[i], averageComparisonsInsertion[i], averageComparisonsSelection[i]);
+    }
+
+    fclose(fp);
 
     printf("Completed\n");
     printf("Starting Swap Tests...");
@@ -191,117 +212,91 @@ int main() {
     double *averageSwapsBubble = (double*) malloc(sizeInputsArrSize * sizeof(double));
     double *averageSwapsInsertion = (double*) malloc(sizeInputsArrSize * sizeof(double));
     double *averageSwapsSelection = (double*) malloc(sizeInputsArrSize * sizeof(double));
+    fp = fopen("1swap.csv", "w+");
 
     for(int i = 0; i < sizeInputsArrSize; i++) {
         int N = sizeInputs[i];
-        int *arr = malloc(N * sizeof(int));
-        
-        //Bubble Sort
-        int swapsBubbleSort = 0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
+        int *arrBubble = malloc(N * sizeof(int));
+        int *arrInsertion = malloc(N * sizeof(int));
+        int *arrSelection = malloc(N * sizeof(int));
+        int totalSwapsBubble = 0;
+        int totalSwapsInsertion = 0;
+        int totalSwapsSelection = 0;
+
+        fprintf(fp, "N = %d\n", N);
+        fprintf(fp, "Test Case, Bubble Sort, Insertion Sort, Selection Sort\n");
+
+        for(int i = 0; i < SAMPLE_SIZE; i++) {
             for(int i = 0; i < N; i++) {
-                arr[i] = rand();
+                int x = rand();
+                arrBubble[i] = x;
+                arrInsertion[i] = x;
+                arrSelection[i] = x;
             }
 
-            int swaps = 0;
+            //Bubble Sort
+            int swapsBubble = 0;
             for(int i = N - 1; i > 0; i--) {
                 for(int j = 0; j < i; j++) {
-                    if(arr[j] > arr[j + 1]) {
-                        swaps++;
-                        int tmp = arr[j];
-                        arr[j] = arr[j + 1];
-                        arr[j + 1] = tmp;
+                    if(arrBubble[j] > arrBubble[j + 1]) {
+                        swapsBubble++;
+                        int tmp = arrBubble[j];
+                        arrBubble[j] = arrBubble[j + 1];
+                        arrBubble[j + 1] = tmp;
                     }
                 }
             }
-            swapsBubbleSort += swaps;
-        }
-        averageSwapsBubble[i] = (double) swapsBubbleSort / 30.0;
+            totalSwapsBubble += swapsBubble;
 
-        //Insertion Sort
-        int swapsInsertionSort = 0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
-            for(int i = 0; i < N; i++) {
-                arr[i] = rand();
-            }
-
-            int swaps = 0;
+            //Insertion Sort
+            int swapsInsertion = 0;
             for(int i = 1; i < N; i++) {
-                int tmp = arr[i], j = i - 1;
-                while(j >= 0 && arr[j] > tmp) {
-                    swaps++;
-                    arr[j + 1] = arr[j];
+                int tmp = arrInsertion[i], j = i - 1;
+                while(j >= 0 && arrInsertion[j] > tmp) {
+                    swapsInsertion++;
+                    arrSelection[j + 1] = arrSelection[j];
                     j--;
                 }
-                arr[j + 1] = tmp;
+                arrInsertion[j + 1] = tmp;
             }
-            swapsInsertionSort += swaps;
-        }
-        averageSwapsInsertion[i] = (double) swapsInsertionSort / 30.0;
+            totalSwapsInsertion += swapsInsertion;
 
-        //Selection Sort
-        int swapsSelectionSort = 0;
-        for(int i = 0; i < 30; i++) {
-            //Randomizer
-            for(int i = 0; i < N; i++) {
-                arr[i] = rand();
-            }
-
-            int swaps = 0;
+            //Selection Sort
+            int swapsSelection = 0;
             for(int i = 0; i < N; i++) {
                 int smallestIndex = i;
                 for(int j = i + 1; j < N; j++) {
-                    if(arr[j] < arr[smallestIndex]) {
-                        smallestIndex = j;
-                    }
+                    if(arrSelection[j] < arrSelection[smallestIndex]) smallestIndex = j;
                 }
 
-                swaps++;
-                int tmp = arr[i];
-                arr[i] = arr[smallestIndex];
-                arr[smallestIndex] = tmp;
+                swapsSelection++;
+                int tmp = arrSelection[i];
+                arrSelection[i] = arrSelection[smallestIndex];
+                arrSelection[smallestIndex] = tmp;
             }
-            swapsSelectionSort += swaps;
+            totalSwapsSelection += swapsSelection;
+
+            fprintf(fp, "%d, %d, %d, %d\n", i + 1, swapsBubble, swapsInsertion, swapsSelection);
         }
-        averageSwapsSelection[i] = (double) swapsSelectionSort / 30.0;
-        free(arr);
+        averageSwapsBubble[i] = (double) totalSwapsBubble / 30.0;
+        averageSwapsInsertion[i] = (double) totalSwapsInsertion / 30.0;
+        averageSwapsSelection[i] = (double) totalSwapsSelection / 30.0;
+
+        fprintf(fp, "Average, %f, %f, %f\n", (double) totalSwapsBubble / 30.0, (double) totalSwapsInsertion / 30.0, (double) totalSwapsSelection / 30.0);
+
+        free(arrBubble);
+        free(arrInsertion);
+        free(arrSelection);
     }
+
+    fprintf(fp, "Summary\n");
+    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
+    for(int i = 0; i < sizeInputsArrSize; i++) {
+        fprintf(fp, "%d, %f, %f, %f\n", sizeInputs[i], averageSwapsBubble[i], averageSwapsInsertion[i], averageSwapsSelection[i]);
+    }
+
+    fclose(fp);
     printf("Completed\n");
-
-    //Output
-    for(int i = 0; i < sizeInputsArrSize; i++) {
-        printf("Time Taken (N = %d) (Bubble Sort): %f s\n", sizeInputs[i], averageTimeBubble[i]);
-        printf("Time Taken (N = %d) (Insertion Sort): %f s\n", sizeInputs[i], averageTimeInsertion[i]);
-        printf("Time Taken (N = %d) (Selection Sort): %f s\n", sizeInputs[i], averageTimeSelection[i]);
-        printf("Comparisons Taken (N = %d) (Bubble Sort): %.2f\n", sizeInputs[i], averageComparisonsBubble[i]);
-        printf("Comparisons Taken (N = %d) (Insertion Sort): %.2f\n", sizeInputs[i], averageComparisonsInsertion[i]);
-        printf("Comparisons Taken (N = %d) (Selection Sort): %.2f\n", sizeInputs[i], averageComparisonsSelection[i]);
-        printf("Swaps Taken (N = %d) (Bubble Sort): %.2f\n", sizeInputs[i], averageSwapsBubble[i]);
-        printf("Swaps Taken (N = %d) (Insertion Sort): %.2f\n", sizeInputs[i], averageSwapsInsertion[i]);
-        printf("Swaps Taken (N = %d) (Selection Sort): %.2f\n", sizeInputs[i], averageSwapsSelection[i]);
-    }
-
-    //Save all averages into CSV???
-    FILE *fp = fopen("1time.csv", "w+");
-    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
-    for(int i = 0; i < sizeInputsArrSize; i++) {
-        fprintf(fp, "%d, %f, %.2f, %.2f\n", sizeInputs[i], averageTimeBubble[i], averageTimeInsertion[i], averageTimeSelection[i]);
-    }
-    fclose(fp);
-    fp = fopen("1comparison.csv", "w+");
-    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
-    for(int i = 0; i < sizeInputsArrSize; i++) {
-        fprintf(fp, "%d, %f, %.2f, %.2f\n", sizeInputs[i], averageComparisonsBubble[i], averageComparisonsInsertion[i], averageComparisonsSelection[i]);
-    }
-    fclose(fp);
-    fp = fopen("1swap.csv", "w+");
-    fprintf(fp, "N, Bubble Sort, Insertion Sort, Selection Sort\n");
-    for(int i = 0; i < sizeInputsArrSize; i++) {
-        fprintf(fp, "%d, %f, %.2f, %.2f\n", sizeInputs[i], averageSwapsBubble[i], averageSwapsInsertion[i], averageSwapsSelection[i]);
-    }
-    fclose(fp);
 
     free(averageTimeBubble);
     free(averageTimeInsertion);
@@ -310,8 +305,7 @@ int main() {
     free(averageComparisonsInsertion);
     free(averageComparisonsSelection);
     free(averageSwapsBubble);
-    free(averageTimeInsertion);
-    free(averageTimeSelection);
-
+    free(averageSwapsInsertion);
+    free(averageSwapsSelection);
     return 0;
 }
