@@ -1,2 +1,17 @@
--1
+45
++
+37
++/-
+^3
+store A
+clear
+-27
++
+-50
+*
+12345
 ^2
+store B
+789
+load A
+clear

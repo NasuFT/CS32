@@ -13,10 +13,6 @@ int max_int(int a, int b) {
     return a < b ? b : a;
 }
 
-int ipow(int num, int exp) {
-
-}
-
 Node* create_node(int x) {
     Node* node = malloc(sizeof(Node));
     node->x = x;
@@ -328,6 +324,7 @@ Node* bigint_square(Node** bigint) {
 Node* bigint_cube(Node** bigint) {
     Node* square_result = bigint_square(bigint);
     Node* result = bigint_multiply(&square_result, bigint);
+    deallocate_bigint(&square_result);
     return result;
 }
 
