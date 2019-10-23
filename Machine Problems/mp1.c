@@ -332,7 +332,7 @@ Node* bigint_cube(Node** bigint) {
 }
 
 int main() {
-    char string[512];
+    char string[1024];
     Node* a = create_zero_bigint();
     Node* b = create_zero_bigint();
     Node* c = create_zero_bigint();
