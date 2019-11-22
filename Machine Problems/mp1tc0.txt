@@ -1,17 +1,22 @@
-45
+5
 +
-37
-+/-
-^3
-store A
-clear
--27
-+
--50
-*
-12345
+store D
+load D
 ^2
-store B
-789
-load A
++
+-2
+store C
+1
+-
+load C
+*
++/-
+68
++
 clear
+*
+23
+-
+2
+-
+^3

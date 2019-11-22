@@ -1,0 +1,14 @@
+Chaining (50 insertions - Total): 0.0002460000
+Chaining (50 insertions - Average): 0.0000001640
+Chaining (100 insertions - Total): 0.0003400000
+Chaining (100 insertions - Average): 0.0000001133
+Chaining (200 insertions - Total): 0.0006770000
+Chaining (200 insertions - Average): 0.0000001128
+Chaining (500 insertions - Total): 0.0016970000
+Chaining (500 insertions - Average): 0.0000001131
+Probing function 1 (100 insertions - Total): 0.0006100000
+Probing function 1 (100 insertions - Average): 0.0000002033
+Probing function 2 (100 insertions - Total): 0.0004780000
+Probing function 2 (100 insertions - Average): 0.0000001593
+
+

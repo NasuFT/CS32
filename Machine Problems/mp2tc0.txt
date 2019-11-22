@@ -1,0 +1,12 @@
+11
+i hello : world
+i dcs : departmentofcomputerscience
+i up : universityofthephilippines
+s dcs
+d up
+d dcs
+s up
+i 69 : nice
+s hello
+s 69
+d 420
