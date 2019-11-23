@@ -2,28 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define HASH_KEYS 256
+#define HASH_KEYS 512
 
 typedef struct Node {
-    char* key;
-    char* data;
+    char key[202];
+    char data[202];
     struct Node* next;
 } Node;
 
-Node* create_node(char key[], int key_size, char data[], int data_size) {
+Node* create_node(char key[], char data[]) {
     Node* node = malloc(sizeof(Node));
-    node->key = malloc(sizeof(char) * (key_size + 1));
-    node->data = malloc(sizeof(char) * (data_size + 1));
     strcpy(node->key, key);
     strcpy(node->data, data);
     node->next = NULL;
     return node;
-}
-
-Node** create_hash_table(int size) {
-    Node** table = malloc(sizeof(Node*) * size);
-    for(int i = 0; i < size; ++i) table[i] = NULL;
-    return table;
 }
 
 int str_to_key(char key[]) {
@@ -31,7 +23,7 @@ int str_to_key(char key[]) {
     int intkey = 0;
 
     while(key[i] != 0) {
-        intkey += (key[i] + i * 63);
+        intkey += ((key[i] * (i + 1)) + i * 67);
         ++i;
     }
 
@@ -52,7 +44,7 @@ Node* get_tail(Node* list) {
     return current_node;
 }
 
-Node* search(Node** table, int size, char key[]) {
+Node* search(Node* table[], int size, char key[]) {
     int hashkey = hash(key, size);
     Node* current_node = table[hashkey];
     while(current_node != NULL) {
@@ -63,39 +55,34 @@ Node* search(Node** table, int size, char key[]) {
     return NULL;
 }
 
-void insert(Node*** hash_table, int* key_size, char key[], char data[]) {
-    Node** table = *hash_table;
-    int size = *key_size;
-
+void insert(Node* table[], int size, char key[], char data[]) {
     int hashkey = hash(key, size);
-    Node* node = get_tail(table[hashkey]);
-    if(node == NULL) table[hashkey] = create_node(key, strlen(key), data, strlen(data));
-    else node->next = create_node(key, strlen(key), data, strlen(data));
+    if(search(table, size, key) != NULL) {
+        Node* node = search(table, size, key);
+        strcpy(node->data, data);
+    }
+    else {
+        Node* node = get_tail(table[hashkey]);
+        if(node == NULL) table[hashkey] = create_node(key, data);
+        else node->next = create_node(key, data);
+    }
 }
 
-void delete(Node*** hash_table, int* key_size, char key[], char** value) {
-    Node** table = *hash_table;
-    int size = *key_size;
-    *value = malloc(sizeof(char) * 102);
-
+void delete(Node* table[], int size, char key[], char value[]) {
     int hashkey = hash(key, size);
     Node* previous_node = NULL;
     Node* current_node = table[hashkey];
     while(current_node != NULL) {
         if(strcmp(current_node->key, key) == 0) {
-            strcpy(*value, current_node->data);
+            strcpy(value, current_node->data);
             if(previous_node != NULL) previous_node->next = current_node->next;
             else table[hashkey] = current_node->next;
-            free(current_node->key);
-            free(current_node->data);
             free(current_node);
             return;
         };
         previous_node = current_node;
         current_node = current_node->next;
     }
-
-    strcpy(*value, "");
 }
 
 void print_search(Node* node) {
@@ -120,32 +107,32 @@ void print_delete(char key[], char* data) {
 
 int main() {
     int size = HASH_KEYS;
-    Node** table = create_hash_table(size);
+    Node* table[HASH_KEYS];
+    for(int i = 0; i < HASH_KEYS; ++i) table[i] = NULL;
     
     int operations;
     scanf("%d", &operations);
 
     for(int i = 0; i < operations; ++i) {
-        char str[4];
+        char str[30];
         scanf("%s", str);
 
         if(str[0] == 'i') {
-            char key[102];
-            char data[102];
+            char key[202];
+            char data[202];
             scanf("%s : %s", key, data);
 
-            insert(&table, &size, key, data);
+            insert(table, size, key, data);
             print_insert(key);
         } else if(str[0] == 'd') {
-            char key[102];
-            char* data = NULL;
+            char key[202];
+            char data[202] = "";
             scanf("%s", key);
 
-            delete(&table, &size, key, &data);
+            delete(table, size, key, data);
             print_delete(key, data);
-            free(data);
         } else if(str[0] == 's') {
-            char key[102];
+            char key[202];
             scanf("%s", key);
 
             Node* node = search(table, size, key);
