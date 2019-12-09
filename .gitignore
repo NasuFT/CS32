@@ -1,2 +1,4 @@
 .vscode/ipch/
 References/
+.gitignore
+.vscode
